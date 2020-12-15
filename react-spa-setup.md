@@ -32,10 +32,10 @@ This is a step-by-step guide to customize CRA for Casemice projects. You can rev
 - [Step 7: Installing stylelint](#step-7-installing-stylelint)
 - [Step 8: Setting up our test environment](#step-8-setting-up-our-test-environment)
 - [Step 9: Enabling hot reloading](#step-9-enabling-hot-reloading)
-- [Step 10: Organizing Folder Structure](#step-10-organizing-folder-structure)
-- [Step 11: Adding Storybook](#step-11-adding-storybook)
-- [Step 12: Adding React Router](#step-12-adding-react-router)
-- [Step 13: Enabling code-splitting](#step-13-enabling-code-splitting)
+- [Step 10: Adding Storybook](#step-11-adding-storybook)
+- [Step 11: Adding React Router](#step-12-adding-react-router)
+- [Step 12: Enabling code-splitting](#step-13-enabling-code-splitting)
+- [Step 13: Organizing Folder Structure](#step-10-organizing-folder-structure)
 - [Step 14: Final Touches](#step-14-final-touches)
 - [Step 15: Starting to Development](#step-14-starting-to-development)
 
@@ -206,7 +206,8 @@ Enzyme is a JavaScript Testing utility for React that makes it easier to test yo
 We'll use `jest` with `enzyme`.
 
 ```sh
-yarn add enzyme enzyme-adapter-react-16 react-test-renderer enzyme-to-json --dev
+yarn add enzyme enzyme-adapter-react-16 react-test-renderer --dev
+yarn add @types/enzyme @types/enzyme-adapter-react-16 --dev
 ```
 
 > Note: We do not need to install Jest, as CRA is bundled with Jest out of the box.
@@ -351,64 +352,7 @@ import { hot } from "react-hot-loader/root";
 export default hot(App);
 ```
 
-## Step 10: Organizing Folder Structure
-
-Our folder structure should look like this;
-
-```
-src/
-├── App.test.tsx
-├── App.tsx
-├── __snapshots__
-│   └── App.test.tsx.snap
-├── components
-│   └── Button
-│       ├── Button.scss
-│       ├── Button.stories.tsx
-│       ├── Button.test.tsx
-│       ├── Button.tsx
-│       ├── __snapshots__
-│       │   └── Button.test.tsx.snap
-│       └── index.ts
-├── containers
-│   └── Like
-│       ├── Like.tsx
-│       └── index.ts
-├── fonts
-├── img
-├── index.tsx
-├── react-app-env.d.ts
-├── routes
-│   ├── Feed
-│   │   ├── Feed.scss
-│   │   ├── Feed.test.tsx
-│   │   ├── Feed.tsx
-│   │   ├── index.ts
-│   │   └── tabs
-│   │       ├── Discover
-│   │       │   ├── Discover.scss
-│   │       │   ├── Discover.test.tsx
-│   │       │   ├── Discover.tsx
-│   │       │   └── index.ts
-│   │       └── MostLiked
-│   │           ├── MostLiked.test.tsx
-│   │           ├── MostLiked.tsx
-│   │           └── index.ts
-│   ├── Home
-│   │   ├── Home.scss
-│   │   ├── Home.test.tsx
-│   │   ├── Home.tsx
-│   │   └── index.ts
-│   └── index.ts
-├── setupTests.ts
-├── styles
-│   └── index.scss
-└── utils
-    ├── location.test.ts
-    └── location.ts
-```
-
-## Step 11: Adding Storybook
+## Step 10: Adding Storybook
 
 We need to initialize the Storybook on our project.
 
@@ -416,55 +360,7 @@ We need to initialize the Storybook on our project.
 npx -p @storybook/cli sb init --type react
 ```
 
-We also need to add `info` addon and `react-docgen-typescript-loader` package to show component props on our stories (Optional but recommended).
-
-```sh
-yarn add @storybook/addon-info react-docgen-typescript-loader --dev
-```
-
-We have to use the [custom Webpack config in full control mode, extending default configs](https://storybook.js.org/docs/configurations/custom-webpack-config/#full-control-mode--default) by creating a `webpack.config.js` file in our Storybook configuration directory (by default, it’s `.storybook`):
-
-`.storybook/webpack.config.js`
-
-```js
-module.exports = ({ config, mode }) => {
-  config.module.rules.push({
-    test: /\.(ts|tsx)$/,
-    use: [
-      {
-        loader: require.resolve("babel-loader"),
-        options: {
-          presets: [require.resolve("babel-preset-react-app")],
-        },
-      },
-      require.resolve("react-docgen-typescript-loader"),
-    ],
-  });
-  config.resolve.extensions.push(".ts", ".tsx");
-  return config;
-};
-```
-
-Since we use `typescript`, we can change the file extensions (`addons` and `config`) to `.ts` in `.storybook` folder. Then we need to update storybook config to register info addon, and stories directory.
-
-`.storybook/config.ts`
-
-```ts
-import { configure, addDecorator } from "@storybook/react";
-import { withInfo } from "@storybook/addon-info";
-
-// automatically import all files ending in *.stories.tsx
-const req = require.context("../src/components", true, /.stories.tsx$/);
-
-function loadStories() {
-  addDecorator(withInfo);
-  req.keys().forEach(req);
-}
-
-configure(loadStories, module);
-```
-
-> We will place the stories inside component folders, you can delete the `stories` folder which is created by storybook initialization process.
+Since we use `typescript`, we can change the file extensions (`main` and `preview`) to `.ts` in `.storybook` folder.
 
 Let's create a story for our Button component.
 
@@ -487,7 +383,7 @@ Run storybook
 yarn storybook
 ```
 
-## Step 12: Adding React Router
+## Step 11: Adding React Router
 
 As usual, we want to use `react-router` for routing.
 
@@ -560,7 +456,7 @@ const App: FunctionComponent = () => (
 export default hot(module)(App);
 ```
 
-## Step 13: Enabling code-splitting
+## Step 12: Enabling code-splitting
 
 We want to make route based code-splitting in order to prevent a huge bundled asset. When we done with this, only relevant assets will be loaded by our application. Let's install `react-loadable`.
 
@@ -599,6 +495,63 @@ const LoadableFeed = Loadable({
 });
 
 export default LoadableFeed;
+```
+
+## Step 13: Organizing Folder Structure
+
+Our folder structure should look like this;
+
+```
+src/
+├── App.test.tsx
+├── App.tsx
+├── __snapshots__
+│   └── App.test.tsx.snap
+├── components
+│   └── Button
+│       ├── Button.scss
+│       ├── Button.stories.tsx
+│       ├── Button.test.tsx
+│       ├── Button.tsx
+│       ├── __snapshots__
+│       │   └── Button.test.tsx.snap
+│       └── index.ts
+├── containers
+│   └── Like
+│       ├── Like.tsx
+│       └── index.ts
+├── fonts
+├── img
+├── index.tsx
+├── react-app-env.d.ts
+├── routes
+│   ├── Feed
+│   │   ├── Feed.scss
+│   │   ├── Feed.test.tsx
+│   │   ├── Feed.tsx
+│   │   ├── index.ts
+│   │   └── tabs
+│   │       ├── Discover
+│   │       │   ├── Discover.scss
+│   │       │   ├── Discover.test.tsx
+│   │       │   ├── Discover.tsx
+│   │       │   └── index.ts
+│   │       └── MostLiked
+│   │           ├── MostLiked.test.tsx
+│   │           ├── MostLiked.tsx
+│   │           └── index.ts
+│   ├── Home
+│   │   ├── Home.scss
+│   │   ├── Home.test.tsx
+│   │   ├── Home.tsx
+│   │   └── index.ts
+│   └── index.ts
+├── setupTests.ts
+├── styles
+│   └── index.scss
+└── utils
+    ├── location.test.ts
+    └── location.ts
 ```
 
 ## Step 14 Final Touches
