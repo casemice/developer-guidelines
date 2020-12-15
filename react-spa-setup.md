@@ -1,6 +1,6 @@
-# CRA Recipe
+# React Single Page App Setup
 
-This is a step-by-step guide to customize CRA for Casemice projects. You can review [CRA Starter](https://github.com/casemice/react-boilerplate) project to see how your application looks like when all steps followed.
+This is a step-by-step guide to customize CRA for Casemice projects. You can review [React Boilerplate](https://github.com/casemice/react-boilerplate) project to see how your application looks like when all steps followed.
 
 ### Tech Stack
 
@@ -32,7 +32,7 @@ This is a step-by-step guide to customize CRA for Casemice projects. You can rev
 - [Step 7: Installing stylelint](#step-7-installing-stylelint)
 - [Step 8: Setting up our test environment](#step-8-setting-up-our-test-environment)
 - [Step 9: Enabling hot reloading](#step-9-enabling-hot-reloading)
-- [Step 10: Adding Storybook](#step-11-adding-storybook)
+- [Step 10: Adding Storybook](#step-10-adding-storybook)
 - [Step 11: Adding React Router](#step-12-adding-react-router)
 - [Step 12: Enabling code-splitting](#step-13-enabling-code-splitting)
 - [Step 13: Organizing Folder Structure](#step-10-organizing-folder-structure)
