@@ -9,6 +9,7 @@ This is a step-by-step guide to customize CRA for Casemice projects. You can rev
 - [React](https://reactjs.org)
 - [React Router](https://github.com/ReactTraining/react-router)
 - [Redux](https://redux.js.org)
+- [Redux Toolkit](https://redux-toolkit.js.org)
 - [Typescript](https://github.com/microsoft/TypeScript)
 
 #### Unit Testing
@@ -24,7 +25,7 @@ This is a step-by-step guide to customize CRA for Casemice projects. You can rev
 ## Table of Contents
 
 - [Step 1: Creating a new app](#step-1-creating-a-new-app)
-- [Step 2: Update TypeScript Configurations](#step-2-update-typescript-configuration)
+- [Step 2: Update TypeScript Configurations](#step-2-update-typescript-configurations)
 - [Step 3: Installing Prettier](#step-3-installing-prettier)
 - [Step 4: Create IDE Configurations](#step-4-create-ide-configurations)
 - [Step 5: Installing ESLint](#step-5-installing-eslint)
@@ -33,11 +34,12 @@ This is a step-by-step guide to customize CRA for Casemice projects. You can rev
 - [Step 8: Setting up our test environment](#step-8-setting-up-our-test-environment)
 - [Step 9: Enabling hot reloading](#step-9-enabling-hot-reloading)
 - [Step 10: Adding Storybook](#step-10-adding-storybook)
-- [Step 11: Adding React Router](#step-12-adding-react-router)
-- [Step 12: Enabling code-splitting](#step-13-enabling-code-splitting)
-- [Step 13: Organizing Folder Structure](#step-10-organizing-folder-structure)
-- [Step 14: Final Touches](#step-14-final-touches)
-- [Step 15: Starting to Development](#step-14-starting-to-development)
+- [Step 11: Adding React Router](#step-11-adding-react-router)
+- [Step 12: Setting up Redux store](#step-12-setting-up-redux-store)
+- [Step 13: Enabling code-splitting](#step-13-enabling-code-splitting)
+- [Step 14: Organizing Folder Structure](#step-14-organizing-folder-structure)
+- [Step 15: Final Touches](#step-15-final-touches)
+- [Step 16: Starting to Development](#step-16-starting-to-development)
 
 ## Step 1: Creating a new app
 
@@ -456,7 +458,119 @@ const App: FunctionComponent = () => (
 export default hot(module)(App);
 ```
 
-## Step 12: Enabling code-splitting
+## Step 12: Setting up redux store
+
+Redux Toolkit is a toolset for efficient Redux development. We are going to setup it and it has little bit different from regular Redux. You may need to check out it's offical [documents](https://redux-toolkit.js.org).
+
+Let's install them and implement loading state for our app
+
+```sh
+yarn add react-redux @reduxjs/toolkit
+yarn add @types/react-redux --dev
+```
+
+In your Loading component folder, create `LoaderSlice.ts` file to create our loading state, action and dispatchers
+
+```js
+import { createSlice } from "@reduxjs/toolkit";
+import { AppDispatch } from "../../store";
+
+export type LoadingState = { isLoading: boolean };
+export type LoadingSliceState = { loading: LoadingState };
+
+export const loadingSlice = createSlice({
+  name: "loading",
+  initialState: {
+    isLoading: true,
+  },
+  reducers: {
+    startLoading: (state) => {
+      state.isLoading = true;
+    },
+    stopLoading: (state) => {
+      state.isLoading = false;
+    },
+  },
+});
+
+export const { startLoading, stopLoading } = loadingSlice.actions;
+
+export const stopLoadingAsync: () => void = () => (dispatch: AppDispatch) => {
+  setTimeout(() => {
+    dispatch(stopLoading());
+  }, 1000);
+};
+
+export const loadingState = (state: LoadingSliceState) =>
+  state.loading.isLoading;
+
+export default loadingSlice.reducer;
+```
+
+Now lets create a `store.ts` file in `/src`
+
+```js
+import { configureStore } from "@reduxjs/toolkit";
+import loadingReducer from "./components/Loading/LoadingSlice";
+
+const store = configureStore({
+  reducer: {
+    loading: loadingReducer,
+  },
+});
+
+export default store;
+
+export type AppDispatch = typeof store.dispatch;
+```
+
+We need to wrap our application with store provider in `/index.ts` as well
+
+```js
+import store from "./store";
+
+const Root: FunctionComponent = () => (
+  <BrowserRouter>
+    <Provider store={store}>
+      <App />
+    </Provider>
+  </BrowserRouter>
+);
+```
+
+We can use it on `Home` page
+
+```js
+import React, { FunctionComponent } from "react";
+import { useSelector, useDispatch } from "react-redux";
+
+// Components
+import Loading from "../../components/Loading";
+
+// State
+import {
+  loadingState,
+  stopLoadingAsync,
+} from "../../components/Loading/LoadingSlice";
+
+const Home: FunctionComponent = () => {
+  const loading = useSelector(loadingState);
+  const dispatch = useDispatch();
+
+  React.useEffect(() => {
+    // This going to dispatch stopLoadingAsync reducer that delays proccess 1000ms
+    dispatch(stopLoadingAsync());
+  }, []);
+
+  return (
+    <div className="container">{loading ? <Loading /> : <h1>Home</h1>}</div>
+  );
+};
+
+export default Home;
+```
+
+## Step 13: Enabling code-splitting
 
 We want to make route based code-splitting in order to prevent a huge bundled asset. When we done with this, only relevant assets will be loaded by our application. Let's install `react-loadable`.
 
@@ -497,7 +611,7 @@ const LoadableFeed = Loadable({
 export default LoadableFeed;
 ```
 
-## Step 13: Organizing Folder Structure
+## Step 14: Organizing Folder Structure
 
 Our folder structure should look like this;
 
@@ -554,7 +668,7 @@ src/
     └── location.ts
 ```
 
-## Step 14 Final Touches
+## Step 15 Final Touches
 
 We are ready to develop our application. Just a final step, we need to update our `README.md` to explain what we add a script so far.
 
@@ -617,7 +731,7 @@ You can learn more in the [Create React App documentation](https://facebook.gith
 To learn React, check out the [React documentation](https://reactjs.org/).
 ```
 
-## Step 15: Starting to Development 🎉
+## Step 16: Starting to Development
 
 Everything is done! You can start to develop your next awesome React application now on 🚀
 
