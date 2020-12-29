@@ -94,7 +94,7 @@ Finally, we update `package.json` with related format scripts.
 
 ## Step 4: Create IDE Configurations
 
-VS Code looks at the settings in the file with .vscode extension for project-based editor settings. Here we activate the formatting feature while saving.
+VS Code looks at the settings in the file with .vscode extension for project-based editor settings. Here we activate the formatting feature on save file.
 
 `.vscode/settings.json`
 
