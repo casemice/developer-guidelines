@@ -1,6 +1,6 @@
-# React Single Page App Setup
+# React Native App Setup with Expo
 
-This is a step-by-step guide to customize CRA for Casemice projects. You can review [React Boilerplate](https://github.com/casemice/react-boilerplate) project to see how your application looks like when all steps followed.
+This is a step-by-step guide to customize CRA for Casemice projects. You can review [React Native Expo Boilerplate](https://github.com/casemice/react-native-expo-boilerplate) project to see how your application looks like when all steps followed.
 
 ### Tech Stack
 
