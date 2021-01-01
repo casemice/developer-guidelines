@@ -209,7 +209,7 @@ We'll use `jest` with `enzyme`.
 
 ```sh
 yarn add enzyme enzyme-adapter-react-16 react-test-renderer --dev
-yarn add @types/enzyme @types/enzyme-adapter-react-16 --dev
+yarn add @types/enzyme @types/enzyme-adapter-react-16 @types/react-test-renderer --dev
 ```
 
 > Note: We do not need to install Jest, as CRA is bundled with Jest out of the box.
